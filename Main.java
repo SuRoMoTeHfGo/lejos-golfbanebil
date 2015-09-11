@@ -41,14 +41,13 @@ public class Main{
 		// Registrerer differentialPilot
 		DifferentialPilot  pilot = new DifferentialPilot (2.1f, 4.4f, Motor.A, Motor.C, true);
 		pilot.setTravelSpeed(450);
-		int distance = 100000;
 		
 		// Kjør roboten
 		boolean kjor = true;
 		while (kjor) {
 			
 			if(ultraSample[0]<1.2) {
-				pilot.travel(distance);
+				pilot.travel();
 			} else pilot.rotate (45);
 			
 			// Trykksensor ting
