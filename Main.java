@@ -27,12 +27,12 @@ public class Main{
 		Brick brick = BrickFinder.getDefault();
 		Port s1 = brick.getPort("S1"); // EV3-uttrasonicsensor
 		Port s2 = brick.getPort("S2"); // EV3-trykksensor
-		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(s1); // EV3-uttrasonicsensor
+		EV3UltrasonicSensor ultraSensor = new EV3UltrasonicSensor(s1); // EV3-uttrasonicsensor
 		EV3TouchSensor trykksensor = new EV3TouchSensor(s2); // EV3-trykksensor
 		
-		/* Definerer en trykksensor */
-		SampleProvider ultrasonicLeser = ultrasonicSensor;
-		float[] ultrasonicSample = new float[ultrasonicLeser.sampleSize()]; // tabell som inneholder avlest verdi
+		/* Definerer en ultrasonisksensor */
+		SampleProvider ultraLeser = ultraSensor.getDistanceMode();
+		float[] ultraSample = new float[ultraLeser.sampleSize()]; // tabell som inneholder avlest verdi
 		
 		/* Definerer en trykksensor */
 		SampleProvider trykkLeser = trykksensor; // 1 eller 0
@@ -41,12 +41,15 @@ public class Main{
 		// Registrerer differentialPilot
 		DifferentialPilot  pilot = new DifferentialPilot (2.1f, 4.4f, Motor.A, Motor.C, true);
 		pilot.setTravelSpeed(450);
+		int distance = 100000;
 		
 		// Kjør roboten
 		boolean kjor = true;
 		while (kjor) {
 			
-			System.out.println(ultrasonicSample[0]);
+			if(ultraSample[0]<1.2) {
+				pilot.travel(distance);
+			} else pilot.rotate (45);
 			
 			// Trykksensor ting
 			trykksensor.fetchSample(trykkSample, 0);
