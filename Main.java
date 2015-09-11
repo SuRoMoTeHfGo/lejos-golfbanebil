@@ -54,7 +54,7 @@ public class Main{
 			// Ultrasonic ting
 			ultrasonicLeser.fetchSample(ultrasonicSample, 0);
 			if(ultrasonicSample[0] < 0.2) {
-				pilot.rotate(30);
+				pilot.rotateRight();
 			} else {
 				pilot.forward();
 			}
@@ -75,9 +75,7 @@ public class Main{
 				Thread.sleep(100);
 				LCD.clear();
 				kjor = false;
-				Motor.A.stop();
-				Motor.C.stop();
-				Motor.B.stop();
+				pilot.stop();
 			}
 		}
 		
