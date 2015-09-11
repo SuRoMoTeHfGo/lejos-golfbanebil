@@ -39,7 +39,38 @@ public class Main{
 		float[] trykkSample = new float[trykkLeser.sampleSize()]; // tabell som inneholder avlest verdi
 		
 		// Registrerer differentialPilot
-		DifferentialPilot pilot = new DifferentialPilot(56, 120, Motor.A, Motor.B, false)
+		DifferentialPilot pilot = new DifferentialPilot(56, 120, Motor.A, Motor.B, false);
+		
+		// Kjør roboten
+		boolean kjor = true;
+		while (kjor) {
+			
+			System.out.println(ultrasonicSample[0]);
+			
+			// Trykksensor ting
+			trykksensor.fetchSample(trykkSample, 0);
+			if (trykkSample[0] > 0){
+				System.out.println("Avslutter");
+				Tread.sleep(100);
+				LCD.clear();
+				System.out.println("Avslutter.");
+				Tread.sleep(100);
+				LCD.clear();
+				System.out.println("Avslutter..");
+				Tread.sleep(100);
+				LCD.clear();
+				System.out.println("Avslutter...");
+				Tread.sleep(100);
+				LCD.clear();
+				kjor = false;
+				Motor.A.stop();
+				Motor.C.stop();
+				Motor.B.stop();
+			}
+		}
+		
+		System.out.println("Avsluttet");
+		Tread.sleep(300);
 		
 	}
 }
