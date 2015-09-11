@@ -18,6 +18,10 @@ import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 import lejos.hardware.sensor.*;
 import lejos.robotics.navigation.DifferentialPilot;
+// Kanskje bruke dette
+import lejos.robotics.objectdetection.FeatureDetector;
+import lejos.robotics.objectdetection.FeatureDetectorAdapter;
+import lejos.robotics.objectdetection.RangeFeatureDetector;
 
 
 public class Main{
@@ -26,12 +30,12 @@ public class Main{
 		// Definerer sensorer:
 		Brick brick = BrickFinder.getDefault();
 		Port s1 = brick.getPort("S1"); // EV3-uttrasonicsensor
-		Port s2 = brick.getPort("S2"); // EV3-trykksensor
+		Port s4 = brick.getPort("S4"); // EV3-trykksensor
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(s1); // EV3-uttrasonicsensor
-		EV3TouchSensor trykksensor = new EV3TouchSensor(s2); // EV3-trykksensor
+		EV3TouchSensor trykksensor = new EV3TouchSensor(s4); // EV3-trykksensor
 		
 		/* Definerer en trykksensor */
-		SampleProvider ultrasonicLeser = ultrasonicSensor;
+		SampleProvider ultrasonicLeser = ultrasonicSensor.getDistanceMode();
 		float[] ultrasonicSample = new float[ultrasonicLeser.sampleSize()]; // tabell som inneholder avlest verdi
 		
 		/* Definerer en trykksensor */
@@ -39,13 +43,21 @@ public class Main{
 		float[] trykkSample = new float[trykkLeser.sampleSize()]; // tabell som inneholder avlest verdi
 		
 		// Registrerer differentialPilot
-		DifferentialPilot pilot = new DifferentialPilot(56, 120, Motor.A, Motor.B, false);
+		DifferentialPilot pilot = new DifferentialPilot(56, 120, Motor.B, Motor.C, false);
+		pilot.setTravelSpeed(300);
+		pilot.setRotateSpeed(200);
 		
 		// Kjør roboten
 		boolean kjor = true;
 		while (kjor) {
 			
-			System.out.println(ultrasonicSample[0]);
+			// Ultrasonic ting
+			ultrasonicLeser.fetchSample(ultrasonicSample, 0);
+			if(ultrasonicSample[0] < 0.2) {
+				pilot.rotate(30);
+			} else {
+				pilot.forward();
+			}
 			
 			// Trykksensor ting
 			trykksensor.fetchSample(trykkSample, 0);
