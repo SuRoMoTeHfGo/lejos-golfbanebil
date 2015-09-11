@@ -39,7 +39,8 @@ public class Main{
 		float[] trykkSample = new float[trykkLeser.sampleSize()]; // tabell som inneholder avlest verdi
 		
 		// Registrerer differentialPilot
-		DifferentialPilot pilot = new DifferentialPilot(56, 120, Motor.A, Motor.B, false);
+		DifferentialPilot  pilot = new DifferentialPilot (2.1f, 4.4f, Motor.A, Motor.C, true);
+		pilot.setTravelSpeed(450);
 		
 		// Kjør roboten
 		boolean kjor = true;
