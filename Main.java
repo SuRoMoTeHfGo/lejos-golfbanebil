@@ -51,16 +51,16 @@ public class Main{
 			trykksensor.fetchSample(trykkSample, 0);
 			if (trykkSample[0] > 0){
 				System.out.println("Avslutter");
-				Tread.sleep(100);
+				Thread.sleep(100);
 				LCD.clear();
 				System.out.println("Avslutter.");
-				Tread.sleep(100);
+				Thread.sleep(100);
 				LCD.clear();
 				System.out.println("Avslutter..");
-				Tread.sleep(100);
+				Thread.sleep(100);
 				LCD.clear();
 				System.out.println("Avslutter...");
-				Tread.sleep(100);
+				Thread.sleep(100);
 				LCD.clear();
 				kjor = false;
 				Motor.A.stop();
@@ -70,7 +70,7 @@ public class Main{
 		}
 		
 		System.out.println("Avsluttet");
-		Tread.sleep(300);
+		Thread.sleep(300);
 		
 	}
 }
