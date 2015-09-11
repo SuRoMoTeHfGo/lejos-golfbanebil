@@ -17,10 +17,29 @@ import lejos.hardware.Keys;
 import lejos.hardware.sensor.SensorModes;
 import lejos.robotics.SampleProvider;
 import lejos.hardware.sensor.*;
+import lejos.robotics.navigation.DifferentialPilot;
 
 
 public class Main{
 	public static void main (String[] arg) throws Exception  {
-	
+		
+		// Definerer sensorer:
+		Brick brick = BrickFinder.getDefault();
+    	Port s1 = brick.getPort("S1"); // EV3-uttrasonicsensor
+		Port s2 = brick.getPort("S2"); // EV3-trykksensor
+		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(s1); // EV3-uttrasonicsensor
+		EV3TouchSensor trykksensor = new EV3TouchSensor(s2); // EV3-trykksensor
+		
+		/* Definerer en trykksensor */
+		SampleProvider ultrasonicLeser = ultrasonicSensor;
+		float[] ultrasonicSample = new float[ultrasonicLeser.sampleSize()]; // tabell som inneholder avlest verdi
+		
+		/* Definerer en trykksensor */
+		SampleProvider trykkLeser = trykksensor; // 1 eller 0
+		float[] trykkSample = new float[trykkLeser.sampleSize()]; // tabell som inneholder avlest verdi
+		
+		// Registrerer differentialPilot
+		DifferentialPilot pilot = new DifferentialPilot(56, 120, Motor.A, Motor.B, false)
+		
 	}
 }
