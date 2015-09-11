@@ -25,7 +25,7 @@ public class Main{
 		
 		// Definerer sensorer:
 		Brick brick = BrickFinder.getDefault();
-    	Port s1 = brick.getPort("S1"); // EV3-uttrasonicsensor
+		Port s1 = brick.getPort("S1"); // EV3-uttrasonicsensor
 		Port s2 = brick.getPort("S2"); // EV3-trykksensor
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(s1); // EV3-uttrasonicsensor
 		EV3TouchSensor trykksensor = new EV3TouchSensor(s2); // EV3-trykksensor
