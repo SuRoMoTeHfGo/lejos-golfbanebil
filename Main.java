@@ -21,17 +21,23 @@ public class Main{
 		Brick brick = BrickFinder.getDefault();
 		Port s1 = brick.getPort("S1"); // EV3-uttrasonicsensor
 		Port s2 = brick.getPort("S2"); // EV3-trykksensor
+		Port s3 = brick.getPort("S3"); // EV3-trykksensor
 
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(s1); // EV3-uttrasonicsensor
-		EV3TouchSensor trykksensor = new EV3TouchSensor(s3); // EV3-trykksensor
+		EV3TouchSensor trykksensor1 = new EV3TouchSensor(s2); // EV3-trykksensor
+		EV3TouchSensor trykksensor2 = new EV3TouchSensor(s3); // EV3-trykksensor
 		
 		/* Definerer en ultrasonicsensor */
 		SampleProvider ultrasonicLeser = ultrasonicSensor.getDistanceMode();
 		float[] ultrasonicSample = new float[ultrasonicLeser.sampleSize()]; // tabell som inneholder avlest verdi
 		
 		/* Definerer en trykksensor */
-		SampleProvider trykkLeser = trykksensor; // 1 eller 0
-		float[] trykkSample = new float[trykkLeser.sampleSize()]; // tabell som inneholder avlest verdi
+		SampleProvider trykkLeser1 = trykksensor1; // 1 eller 0
+		float[] trykkSample1 = new float[trykkLeser1.sampleSize()]; // tabell som inneholder avlest verdi
+		
+		/* Definerer en trykksensor */
+		SampleProvider trykkLeser2 = trykksensor2; // 1 eller 0
+		float[] trykkSample2 = new float[trykkLeser2.sampleSize()]; // tabell som inneholder avlest verdi
 		
 		// Registrerer differentialPilot
 		DifferentialPilot pilot = new DifferentialPilot(56, 120, Motor.B, Motor.C, false);
@@ -43,17 +49,19 @@ public class Main{
 		Random random = new Random();
 		while (kjor) {
 			// Unngå hindringer logikk
-			int dir = random.nextInt(2);
+			int dir = random.nextInt(3);
 			ultrasonicLeser.fetchSample(ultrasonicSample, 0);
-			trykksensor.fetchSample(trykkSample1, 0);
+			trykksensor1.fetchSample(trykkSample1, 0);
+			trykksensor2.fetchSample(trykkSample2, 0);
 			System.out.println(ultrasonicSample[0]);
-			if (trykksensor == 1) {
-				pilot.backward(50);
-				if (dir == 0) {
-					pilot.rotateLeft();
-				} else {
-					pilot.rotateRight();
-				}
+			if (trykkSample1[0] > 0) {
+				System.out.println("Trykket!");
+				pilot.travel(-50);
+				pilot.rotateRight();
+			} else if (trykkSample2[0] > 0) {
+				System.out.println("Trykket!");
+				pilot.travel(-50);
+				pilot.rotateLeft();
 			} else if(ultrasonicSample[0] < 0.15) {
 				if (dir == 0) {
 					pilot.rotateLeft();
@@ -63,7 +71,7 @@ public class Main{
 			} else{
 				pilot.forward();
 			}
-			Thread.sleep(300);
+			Thread.sleep(200);
 				
 		} //Avslutt while
 	}
