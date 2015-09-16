@@ -1,13 +1,8 @@
+import java.util.*;
 import lejos.hardware.motor.*;
 import lejos.hardware.lcd.*;
 import lejos.hardware.sensor.EV3TouchSensor;
-import lejos.hardware.sensor.EV3ColorSensor;
 import lejos.hardware.sensor.EV3UltrasonicSensor;
-import lejos.hardware.sensor.EV3GyroSensor;
-import lejos.hardware.sensor.NXTTouchSensor;
-import lejos.hardware.sensor.NXTLightSensor;
-import lejos.hardware.sensor.NXTColorSensor;
-import lejos.hardware.sensor.NXTSoundSensor;
 import lejos.hardware.sensor.NXTUltrasonicSensor;
 import lejos.hardware.port.Port;
 import lejos.hardware.Brick;
@@ -19,129 +14,57 @@ import lejos.robotics.SampleProvider;
 import lejos.hardware.sensor.*;
 import lejos.robotics.navigation.DifferentialPilot;
 
-
-
 public class Main{
 	public static void main (String[] arg) throws Exception  {
 		
 		// Definerer sensorer:
 		Brick brick = BrickFinder.getDefault();
 		Port s1 = brick.getPort("S1"); // EV3-uttrasonicsensor
-		//Port s3 = brick.getPort("S3"); // EV3-trykksensor
-		//Port s4 = brick.getPort("S4"); // EV3-trykksensor
+		Port s2 = brick.getPort("S2"); // EV3-trykksensor
+
 		EV3UltrasonicSensor ultrasonicSensor = new EV3UltrasonicSensor(s1); // EV3-uttrasonicsensor
-		//EV3TouchSensor trykksensor1 = new EV3TouchSensor(s3); // EV3-trykksensor
-		//EV3TouchSensor trykksensor2 = new EV3TouchSensor(s4); // EV3-trykksensor
+		EV3TouchSensor trykksensor = new EV3TouchSensor(s3); // EV3-trykksensor
 		
-		/* Definerer en trykksensor */
+		/* Definerer en ultrasonicsensor */
 		SampleProvider ultrasonicLeser = ultrasonicSensor.getDistanceMode();
 		float[] ultrasonicSample = new float[ultrasonicLeser.sampleSize()]; // tabell som inneholder avlest verdi
 		
 		/* Definerer en trykksensor */
-		//SampleProvider trykkLeser1 = trykksensor1; // 1 eller 0
-		//float[] trykkSample1 = new float[trykkLeser1.sampleSize()]; // tabell som inneholder avlest verdi
-		
-		//SampleProvider trykkLeser2 = trykksensor2; // 1 eller 0
-		//float[] trykkSample2 = new float[trykkLeser2.sampleSize()]; // tabell som inneholder avlest verdi
+		SampleProvider trykkLeser = trykksensor; // 1 eller 0
+		float[] trykkSample = new float[trykkLeser.sampleSize()]; // tabell som inneholder avlest verdi
 		
 		// Registrerer differentialPilot
 		DifferentialPilot pilot = new DifferentialPilot(56, 120, Motor.B, Motor.C, false);
-		pilot.setTravelSpeed(100);
-		pilot.setRotateSpeed(100);
-		
-		int motorDirection = 1;
-		int prevDirection = 1;
-		Motor.D.setSpeed(800);
-		Motor.D.rotateTo(45);
+		pilot.setTravelSpeed(80);
+		pilot.setRotateSpeed(150);
 		
 		// Kjør roboten
 		boolean kjor = true;
+		Random random = new Random();
 		while (kjor) {
-			
 			// Unngå hindringer logikk
-			//trykksensor1.fetchSample(trykkSample1, 0);
-			//trykksensor2.fetchSample(trykkSample2, 0);
+			int dir = random.nextInt(2);
 			ultrasonicLeser.fetchSample(ultrasonicSample, 0);
-			switch (motorDirection) {
-				case 1:
-					if(ultrasonicSample[0] < 0.2) {
-						pilot.rotateLeft();
-					} else {
-						pilot.forward();
-					}
-					prevDirection = motorDirection;
-					motorDirection = 2;
-					Thread.sleep(200);
-					Motor.D.rotateTo(20);
-					break;
-				case 2:
-					if(ultrasonicSample[0] < 0.2) {
-						pilot.rotateLeft();
-					} else {
-						pilot.forward();
-					}
-					prevDirection = motorDirection;
-					motorDirection = 3;
-					if (prevDirection == 1) {
-						motorDirection = 2;
-					} else if (prevDirection == 3) {
-						motorDirection = 1;
-					}
-					Thread.sleep(200);
-					Motor.D.rotateTo(-20);
-					break;
-				case 3:
-					if(ultrasonicSample[0] < 0.2) {
-						pilot.rotateRight();
-					} else {
-						pilot.forward();
-					}
-					prevDirection = motorDirection;
-					if (prevDirection == 2) {
-						motorDirection = 4;
-					} else if (prevDirection == 4) {
-						motorDirection = 2;
-					}
-					Thread.sleep(200);
-					Motor.D.rotateTo(-45);
-					break;
-				case 4:
-					if(ultrasonicSample[0] < 0.2) {
-						pilot.rotateRight();
-					} else {
-						pilot.forward();
-					}
-					prevDirection = motorDirection;
-					motorDirection = 3;
-					Thread.sleep(200);
-					Motor.D.rotateTo(45);
-					break;
+			trykksensor.fetchSample(trykkSample1, 0);
+			System.out.println(ultrasonicSample[0]);
+			if (trykksensor == 1) {
+				pilot.backward(50);
+				if (dir == 0) {
+					pilot.rotateLeft();
+				} else {
+					pilot.rotateRight();
+				}
+			} else if(ultrasonicSample[0] < 0.15) {
+				if (dir == 0) {
+					pilot.rotateLeft();
+				} else {
+					pilot.rotateRight();
+				}
+			} else{
+				pilot.forward();
 			}
-			
-			/*
-			if (Button.ENTER.isPressed()){
-				System.out.println("Avslutter");
-				Thread.sleep(100);
-				LCD.clear();
-				System.out.println("Avslutter.");
-				Thread.sleep(100);
-				LCD.clear();
-				System.out.println("Avslutter..");
-				Thread.sleep(100);
-				LCD.clear();
-				System.out.println("Avslutter...");
-				Thread.sleep(100);
-				LCD.clear();
-				pilot.stop();
-				kjor = false;
-			}
-			*/
+			Thread.sleep(300);
 				
-				
-		}
-		
-		System.out.println("Avsluttet");
-		Thread.sleep(300);
-		
+		} //Avslutt while
 	}
 }
